@@ -1,0 +1,185 @@
+getgenv().config = getgenv().config or {
+    Ripindra = true,
+    Doughking = false
+}
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
+local Teams = game:GetService("Teams")
+local TweenService = game:GetService("TweenService")
+
+spawn(function()
+    if Players.LocalPlayer.Team ~= Teams:FindFirstChild("Marines") then
+        repeat wait()
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("SetTeam", "Marines")
+        until Players.LocalPlayer.Team == Teams:FindFirstChild("Marines")
+    end
+end)
+
+local function notify(text)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "Ygz Hub",
+            Text = text,
+            Duration = 10
+        })
+    end)
+end
+
+function AutoHaki()
+    if not Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("Buso")
+    end
+end
+
+function EquipMelee()
+    local char = Players.LocalPlayer.Character
+    local backpack = Players.LocalPlayer.Backpack
+    for _, tool in pairs(backpack:GetChildren()) do
+        if tool:IsA("Tool") and tool.ToolTip == "Melee" then
+            tool.Parent = char
+            return
+        end
+    end
+end
+
+function AttackMob(mob)
+    if mob and mob:FindFirstChild("HumanoidRootPart") then
+        ReplicatedStorage.Remotes.Combat:FireServer(mob.HumanoidRootPart)
+    end
+end
+
+local TrollApi = loadstring(game:HttpGet("https://raw.githubusercontent.com/PorryDepTrai/exploit/main/SimpleTroll.lua"))()
+local function decode(job)
+    return TrollApi["Decode JobId API Porry | discord.gg/umaru | MB KHOI"](job, "discord.gg/umaru | MB_Bank 9929992999 Phan Dat Khoi")
+end
+
+local function scrapeAPI(api)
+    local success, response = pcall(function()
+        return request({Url = api, Method = "GET"})
+    end)
+    if success and response.Success then
+        local data = HttpService:JSONDecode(response.Body)
+        if data.Amount > 0 then
+            local jobIds = {}
+            for _, job in ipairs(data.JobId) do
+                for jobId, _ in pairs(job) do
+                    table.insert(jobIds, jobId)
+                end
+            end
+            return jobIds
+        end
+    end
+    return nil
+end
+
+local function AutoHopSV(api)
+    local jobIds = scrapeAPI(api)
+    if not jobIds then
+        notify("Không tìm thấy server.")
+        return
+    end
+    for _, jobId in ipairs(jobIds) do
+        notify("Đang hop server...")
+        ReplicatedStorage.__ServerBrowser:InvokeServer("teleport", decode(jobId))
+        wait(6)
+    end
+end
+
+local function HasIndraHat()
+    for _, v in pairs(Players.LocalPlayer.Backpack:GetChildren()) do
+        if v.Name:lower():find("indra") or v.Name == "Valkyrie Helmet" then
+            return true
+        end
+    end
+    for _, v in pairs(Players.LocalPlayer.Character:GetChildren()) do
+        if v:IsA("Accessory") and (v.Name:lower():find("indra") or v.Name == "Valkyrie Helmet") then
+            return true
+        end
+    end
+    return false
+end
+
+local function TweenTo(cf)
+    local char = Players.LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+    local dist = (hrp.Position - cf.Position).Magnitude
+    local tweenInfo = TweenInfo.new(dist / 250, Enum.EasingStyle.Linear)
+    local tween = TweenService:Create(hrp, tweenInfo, {CFrame = cf})
+    tween:Play()
+    tween.Completed:Wait()
+end
+
+local AdminPos = CFrame.new(-5344.822265625, 423.98541259766, -2725.0930175781)
+
+spawn(function()
+    while wait() do
+        if getgenv().config.Ripindra then
+            pcall(function()
+                local ripIndra = workspace.Enemies:FindFirstChild("rip_indra True Form") or workspace.Enemies:FindFirstChild("rip_indra")
+                if ripIndra and ripIndra:FindFirstChild("HumanoidRootPart") and ripIndra:FindFirstChild("Humanoid") then
+                    notify("Đang đánh rip_indra...")
+                    TweenTo(ripIndra.HumanoidRootPart.CFrame * CFrame.new(0, -40, 0))
+                    while getgenv().config.Ripindra and ripIndra and ripIndra.Parent and ripIndra.Humanoid.Health > 0 do
+                        AutoHaki()
+                        EquipMelee()
+                        AttackMob(ripIndra)
+                        wait(0.2)
+                    end
+                    notify("rip_indra đã chết → chờ hoặc hop...")
+                else
+                    TweenTo(AdminPos)
+                end
+            end)
+        end
+    end
+end)
+
+spawn(function()
+    while wait(5) do
+        if not workspace.Enemies:FindFirstChild("rip_indra") and not workspace.Enemies:FindFirstChild("rip_indra True Form") then
+            if not HasIndraHat() then
+                if getgenv().config.Ripindra then
+                    notify("Không có rip_indra → hop...")
+                    AutoHopSV("https://hostserver.porry.store/bloxfruit/bot/JobId/indra")
+                end
+            else
+                notify("Đã có mũ → chuyển sang Dough King")
+                wait(2)
+                getgenv().config.Ripindra = false
+                if getgenv().config.Doughking then
+                    AutoHopSV("https://hostserver.porry.store/bloxfruit/bot/JobId/doughking")
+                end
+                break
+            end
+        end
+    end
+end)
+
+spawn(function()
+    while wait(0.2) do
+        if getgenv().config.Doughking and _G.Settings and _G.Settings.Farm and _G.Settings.Farm["Auto Kill Dough King"] then
+            pcall(function()
+                local enemy = workspace.Enemies:FindFirstChild("Dough King")
+                if enemy and enemy:FindFirstChild("Humanoid") and enemy:FindFirstChild("HumanoidRootPart") and enemy.Humanoid.Health > 0 then
+                    repeat
+                        game:GetService("RunService").Heartbeat:Wait()
+                        AutoHaki()
+                        EquipWeapon(_G.Settings.Main["Selected Weapon"])
+                        enemy.Humanoid.WalkSpeed = 0
+                        enemy.HumanoidRootPart.Size = Vector3.new(1, 1, 1)
+                        TweenPlayer(enemy.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0))
+                        RemoveAnimation(enemy)
+                        Attack()
+                        if enemy.Humanoid:FindFirstChild("Animator") then
+                            enemy.Humanoid.Animator:Destroy()
+                        end
+                    until not getgenv().config.Doughking or not enemy.Parent or enemy.Humanoid.Health <= 0
+                end
+            end)
+        end
+    end
+end)
