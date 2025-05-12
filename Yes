@@ -25,9 +25,9 @@ utils.win_create = function(args)
         Name = "DropShadowHolder",
         Parent = CoinCard,
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundTransparency = 1.000,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, 0, 0.100000001, 0),
+        Position = UDim2.new(0.5, 0, 0.1, 0),
         Size = UDim2.new(0, 500, 0, 68),
         ZIndex = 0,
     })
@@ -36,14 +36,14 @@ utils.win_create = function(args)
         Name = "DropShadow",
         Parent = DropShadowHolder,
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundTransparency = 1.000,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(1, 47, 1, 47),
         ZIndex = 0,
         Image = "rbxassetid://6015897843",
         ImageColor3 = Color3.fromRGB(128, 0, 128),
-        ImageTransparency = 0.500,
+        ImageTransparency = 0.5,
         ScaleType = Enum.ScaleType.Slice,
         SliceCenter = Rect.new(49, 49, 450, 450),
     })
@@ -52,8 +52,8 @@ utils.win_create = function(args)
         Name = "Main",
         Parent = DropShadow,
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Color3.fromRGB(128, 0, 128),
-        BackgroundTransparency = 0.500,
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 0.4,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -66,7 +66,7 @@ utils.win_create = function(args)
     })
 
     local UIStroke_2 = utils.create("UIStroke", {
-        Color = Color3.fromRGB(255, 255, 255),
+        Color = Color3.fromRGB(128, 0, 128),
         Parent = Main,
         Thickness = 2.5,
     })
@@ -83,16 +83,13 @@ utils.win_create = function(args)
         Name = "Top",
         Parent = Main,
         AnchorPoint = Vector2.new(0.5, 0),
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.999,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
+        BackgroundTransparency = 1,
         Position = UDim2.new(0.5, 0, 0, 15),
         Size = UDim2.new(0, 500, 0, 18),
         Font = Enum.Font.GothamBold,
         Text = args["top"],
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 16.000,
+        TextSize = 16,
         TextYAlignment = Enum.TextYAlignment.Bottom,
     })
 
@@ -108,16 +105,13 @@ utils.win_create = function(args)
         Name = "Under",
         Parent = Main,
         AnchorPoint = Vector2.new(0.5, 0),
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.999,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
+        BackgroundTransparency = 1,
         Position = UDim2.new(0.5, 0, 0, 35),
         Size = UDim2.new(0, 500, 0, 18),
         Font = Enum.Font.GothamBold,
         Text = args["btm"],
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 18.000,
+        TextSize = 18,
         TextYAlignment = Enum.TextYAlignment.Bottom,
     })
 
@@ -157,12 +151,10 @@ utils.win_create = function(args)
     end)
 
     local sub_function = {}
-
     sub_function.status_update = function(msg)
-        if not msg or typeof(msg) ~= "string" then
-            return
+        if typeof(msg) == "string" then
+            Under.Text = msg
         end
-        Under.Text = msg
     end
 
     return sub_function
